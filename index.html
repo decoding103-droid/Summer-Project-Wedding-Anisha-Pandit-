@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Summer Project — Wedding Venue Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#ffffff;
+  --charcoal:#23262b;
+  --charcoal-soft:#5b5f6a;
+  --light-gray:#f3f3f5;
+  --line:#e4e4e8;
+  --navy:#132a4c;
+  --navy-deep:#0c1c34;
+  --navy-soft:#2c4a78;
+  --emerald:#0f9d74;
+  --emerald-deep:#0b7d5c;
+  --crimson:#bb2b3e;
+  --crimson-deep:#96202f;
+  --gold-hair:#c9a45c;
+  --shadow-sm:0 1px 2px rgba(19,42,76,0.06),0 1px 1px rgba(19,42,76,0.04);
+  --shadow-md:0 8px 24px rgba(19,42,76,0.10);
+  --shadow-lg:0 20px 48px rgba(12,28,52,0.16);
+  --radius:14px;
+  --radius-sm:9px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  color:var(--charcoal);
+  background:var(--white);
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+h1,h2,h3,.font-display{font-family:'Playfair Display',serif;}
+.mono{font-family:'IBM Plex Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+.container{max-width:1180px;margin:0 auto;padding:0 28px;}
+@media (max-width:640px){.container{padding:0 18px;}}
+
+/* ---------- Motion ---------- */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.fade-up{animation:fadeUp .6s ease both;}
+.fade-in{animation:fadeIn .4s ease both;}
+.delay-1{animation-delay:.08s;} .delay-2{animation-delay:.16s;} .delay-3{animation-delay:.24s;} .delay-4{animation-delay:.32s;}
+@media (prefers-reduced-motion:reduce){.fade-up,.fade-in{animation:none;}}
+
+/* ---------- Top Nav ---------- */
+.topnav{
+  position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,0.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.topnav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-weight:600;font-size:19px;color:var(--navy);letter-spacing:.2px;}
+.seal{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--navy);
+  border:1.5px solid var(--gold-hair);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold-hair);font-family:'Playfair Display',serif;font-size:13px;font-weight:600;
+  flex-shrink:0;
+}
+.navlinks{display:flex;align-items:center;gap:4px;}
+.navlinks a{padding:9px 14px;border-radius:999px;font-size:14.5px;font-weight:500;color:var(--charcoal-soft);transition:background .15s, color .15s;}
+.navlinks a:hover{background:var(--light-gray);color:var(--navy);}
+.navlinks a.active{color:var(--navy);background:var(--light-gray);font-weight:600;}
+.navcta{display:flex;align-items:center;gap:10px;}
+.hamburger{display:none;background:none;border:none;padding:8px;}
+.hamburger span{display:block;width:20px;height:2px;background:var(--charcoal);margin:4px 0;border-radius:2px;}
+@media (max-width:860px){
+  .navlinks{display:none;}
+  .hamburger{display:block;}
+  .navlinks.mobile-open{
+    display:flex;flex-direction:column;align-items:stretch;gap:2px;
+    position:absolute;top:64px;left:0;right:0;background:var(--white);
+    border-bottom:1px solid var(--line);padding:10px 20px 16px;box-shadow:var(--shadow-md);
+  }
+  .navlinks.mobile-open a{padding:12px 10px;border-radius:8px;}
+}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:999px;border:1px solid transparent;font-size:14.5px;font-weight:600;transition:transform .12s ease, box-shadow .12s ease, background .15s;white-space:nowrap;}
+.btn:active{transform:translateY(1px);}
+.btn-navy{background:var(--navy);color:var(--white);}
+.btn-navy:hover{background:var(--navy-deep);box-shadow:var(--shadow-sm);}
+.btn-emerald{background:var(--emerald);color:var(--white);}
+.btn-emerald:hover{background:var(--emerald-deep);}
+.btn-crimson{background:var(--crimson);color:var(--white);}
+.btn-crimson:hover{background:var(--crimson-deep);}
+.btn-ghost{background:transparent;color:var(--navy);border:1px solid var(--line);}
+.btn-ghost:hover{background:var(--light-gray);}
+.btn-sm{padding:7px 14px;font-size:13px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+
+/* ---------- Hero (landing) ---------- */
+.hero{
+  background:radial-gradient(circle at 18% 20%, var(--navy-soft) 0%, var(--navy) 46%, var(--navy-deep) 100%);
+  color:var(--white);position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(201,164,92,.35) 0, transparent 60%),
+    radial-gradient(1px 1px at 70% 60%, rgba(201,164,92,.25) 0, transparent 60%),
+    radial-gradient(1px 1px at 85% 20%, rgba(201,164,92,.3) 0, transparent 60%);
+  pointer-events:none;
+}
+.hero-inner{position:relative;padding:96px 0 74px;text-align:center;}
+.hero-emblem{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold-hair);display:flex;align-items:center;justify-content:center;margin:0 auto 26px;color:var(--gold-hair);font-family:'Playfair Display',serif;font-size:22px;}
+.hero-eyebrow{letter-spacing:3px;text-transform:uppercase;font-size:12px;color:var(--gold-hair);font-weight:600;margin-bottom:18px;}
+.hero h1{font-size:clamp(34px,5.4vw,60px);font-weight:600;margin:0 0 18px;line-height:1.1;}
+.hero h1 em{font-style:italic;color:var(--gold-hair);}
+.hero p{max-width:560px;margin:0 auto 34px;color:rgba(255,255,255,.78);font-size:16.5px;}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.hero-stats{display:flex;justify-content:center;gap:0;margin-top:64px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.14);padding-top:34px;}
+.hero-stat{padding:0 34px;text-align:center;border-right:1px solid rgba(255,255,255,.14);}
+.hero-stat:last-child{border-right:none;}
+.hero-stat .num{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--white);}
+.hero-stat .lbl{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:2px;}
+
+/* ---------- Section shells ---------- */
+.section{padding:64px 0;}
+.section-tight{padding:44px 0;}
+.section-gray{background:var(--light-gray);}
+.section-head{margin-bottom:32px;}
+.eyebrow{letter-spacing:2.5px;text-transform:uppercase;font-size:11.5px;font-weight:700;color:var(--emerald-deep);margin-bottom:10px;}
+.section-head h2{font-size:30px;font-weight:600;margin:0 0 8px;color:var(--navy);}
+.section-head p{color:var(--charcoal-soft);font-size:15px;max-width:560px;}
+.breadcrumb{font-size:13px;color:var(--charcoal-soft);margin-bottom:18px;}
+.breadcrumb a{color:var(--navy-soft);}
+.breadcrumb a:hover{text-decoration:underline;}
+
+/* ---------- Feature cards (landing) ---------- */
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media (max-width:860px){.grid3{grid-template-columns:1fr;}}
+.feature-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow-sm);transition:box-shadow .18s ease, transform .18s ease;}
+.feature-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.feature-icon{width:40px;height:40px;border-radius:10px;background:var(--light-gray);display:flex;align-items:center;justify-content:center;margin-bottom:16px;color:var(--navy);}
+.feature-card h3{font-size:17px;margin:0 0 8px;color:var(--charcoal);font-weight:600;font-family:'Inter',sans-serif;}
+.feature-card p{margin:0;font-size:14px;color:var(--charcoal-soft);}
+
+/* ---------- Cards / generic ---------- */
+.card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);}
+.card-pad{padding:22px;}
+.stat-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);}
+.stat-card .stat-num{font-family:'Playfair Display',serif;font-size:30px;font-weight:600;color:var(--navy);}
+.stat-card .stat-lbl{font-size:12.5px;color:var(--charcoal-soft);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+@media (max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ---------- App layout (dashboard/reports w/ sidebar) ---------- */
+.app-layout{display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start;}
+@media (max-width:800px){.app-layout{grid-template-columns:1fr;}}
+.sidebar{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:14px;position:sticky;top:80px;}
+.sidebar a{display:block;padding:10px 12px;border-radius:8px;font-size:14px;color:var(--charcoal-soft);font-weight:500;margin-bottom:2px;}
+.sidebar a:hover{background:var(--light-gray);color:var(--navy);}
+.sidebar a.active{background:var(--navy);color:var(--white);}
+.sidebar .side-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#9a9ea8;padding:10px 12px 4px;}
+
+/* ---------- Forms ---------- */
+label{display:block;font-size:13px;font-weight:600;color:var(--charcoal);margin-bottom:6px;}
+.field{margin-bottom:16px;}
+.hint{font-size:12px;color:var(--charcoal-soft);margin-top:5px;}
+.err{font-size:12.5px;color:var(--crimson-deep);margin-top:5px;font-weight:500;}
+input[type=text],input[type=number],input[type=email],input[type=password],input[type=tel],select,textarea{
+  width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1px solid var(--line);
+  font-size:14.5px;font-family:'Inter',sans-serif;background:var(--white);color:var(--charcoal);
+  transition:border-color .15s, box-shadow .15s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy-soft);box-shadow:0 0 0 3px rgba(19,42,76,0.10);}
+input.invalid,select.invalid{border-color:var(--crimson);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:640px){.form-grid{grid-template-columns:1fr;}}
+
+/* ---------- Tables ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:640px;}
+thead th{background:var(--light-gray);text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--charcoal-soft);padding:12px 16px;font-weight:700;border-bottom:1px solid var(--line);}
+tbody td{padding:13px 16px;border-bottom:1px solid var(--line);color:var(--charcoal);}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#fafbfc;}
+.row-actions{display:flex;gap:6px;}
+
+/* ---------- Badges ---------- */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;font-size:12px;font-weight:600;}
+.badge-confirmed{background:rgba(15,157,116,.12);color:var(--emerald-deep);}
+.badge-cancelled{background:rgba(187,43,62,.12);color:var(--crimson-deep);}
+.badge-completed{background:rgba(19,42,76,.10);color:var(--navy);}
+.badge-pending{background:rgba(201,164,92,.18);color:#8a6c26;}
+.badge-avail{background:rgba(15,157,116,.12);color:var(--emerald-deep);}
+.badge-unavail{background:rgba(187,43,62,.12);color:var(--crimson-deep);}
+
+/* ---------- Venue cards ---------- */
+.venue-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+@media (max-width:940px){.venue-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:640px){.venue-grid{grid-template-columns:1fr;}}
+.venue-card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .18s ease, transform .18s ease;display:flex;flex-direction:column;}
+.venue-card:hover{box-shadow:var(--shadow-md);transform:translateY(-3px);}
+.venue-media{height:140px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy-soft) 100%);position:relative;display:flex;align-items:flex-end;padding:14px;}
+.venue-media .venue-id-tag{position:absolute;top:12px;right:12px;background:rgba(255,255,255,.15);color:#fff;font-size:11px;padding:3px 9px;border-radius:999px;font-family:'IBM Plex Mono',monospace;}
+.venue-media .venue-monogram{color:rgba(255,255,255,.5);font-family:'Playfair Display',serif;font-size:15px;letter-spacing:1px;}
+.venue-body{padding:18px;flex:1;display:flex;flex-direction:column;gap:10px;}
+.venue-body h3{margin:0;font-size:17px;color:var(--charcoal);font-family:'Inter',sans-serif;font-weight:700;}
+.venue-meta{font-size:13px;color:var(--charcoal-soft);display:flex;flex-direction:column;gap:4px;}
+.venue-price{font-family:'Playfair Display',serif;font-size:20px;color:var(--navy);font-weight:600;}
+.venue-price span{font-size:12px;color:var(--charcoal-soft);font-family:'Inter',sans-serif;font-weight:500;}
+.venue-foot{display:flex;gap:8px;margin-top:auto;padding-top:6px;}
+
+/* ---------- Tabs ---------- */
+.tabbar{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:26px;flex-wrap:wrap;}
+.tabbar button{background:none;border:none;padding:11px 6px;margin-right:22px;font-size:14.5px;font-weight:600;color:var(--charcoal-soft);border-bottom:2px solid transparent;transition:color .15s, border-color .15s;}
+.tabbar button.active{color:var(--navy);border-bottom-color:var(--navy);}
+
+/* ---------- Modal ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,28,52,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:20px;animation:fadeIn .18s ease;}
+.modal{background:var(--white);border-radius:var(--radius);max-width:460px;width:100%;padding:26px;box-shadow:var(--shadow-lg);max-height:88vh;overflow-y:auto;animation:fadeUp .22s ease;}
+.modal h3{margin:0 0 6px;font-size:19px;color:var(--navy);}
+.modal .sub{font-size:13.5px;color:var(--charcoal-soft);margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+
+/* ---------- Toast ---------- */
+.toast-wrap{position:fixed;top:20px;right:20px;z-index:200;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--navy);color:#fff;padding:13px 18px;border-radius:10px;font-size:14px;box-shadow:var(--shadow-md);display:flex;align-items:center;gap:10px;animation:fadeUp .25s ease;max-width:320px;}
+.toast.success{background:var(--emerald-deep);}
+.toast.error{background:var(--crimson-deep);}
+
+/* ---------- Ticket stub (signature element) ---------- */
+.ticket{
+  position:relative;background:var(--white);border-radius:16px;
+  box-shadow:var(--shadow-lg);overflow:hidden;
+  border:1px solid var(--line);
+}
+.ticket-top{background:linear-gradient(135deg,var(--navy) 0%, var(--navy-soft) 100%);color:#fff;padding:26px 26px 34px;text-align:center;position:relative;}
+.ticket-seal{width:52px;height:52px;border-radius:50%;background:var(--navy-deep);border:1.5px solid var(--gold-hair);color:var(--gold-hair);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;margin:0 auto 12px;font-size:18px;}
+.ticket-top .status{display:inline-block;background:rgba(255,255,255,.14);padding:4px 12px;border-radius:999px;font-size:12px;letter-spacing:.5px;text-transform:uppercase;margin-top:10px;}
+.ticket-tear{position:relative;height:0;}
+.ticket-tear::before,.ticket-tear::after{content:"";position:absolute;top:-13px;width:26px;height:26px;border-radius:50%;background:var(--light-gray);}
+.ticket-tear::before{left:-13px;}
+.ticket-tear::after{right:-13px;}
+.ticket-dash{border-top:2px dashed var(--line);margin:0 26px;}
+.ticket-body{padding:26px;}
+.ticket-code{font-family:'IBM Plex Mono',monospace;font-size:22px;text-align:center;letter-spacing:2px;color:var(--navy);margin-bottom:18px;}
+.ticket-row{display:flex;justify-content:space-between;padding:9px 0;font-size:14px;border-bottom:1px dashed var(--line);}
+.ticket-row:last-child{border-bottom:none;}
+.ticket-row .k{color:var(--charcoal-soft);}
+.ticket-row .v{font-weight:600;color:var(--charcoal);}
+
+/* ---------- Footer ---------- */
+footer{background:var(--navy-deep);color:rgba(255,255,255,.72);padding:44px 0 26px;margin-top:20px;}
+footer .foot-inner{display:flex;justify-content:space-between;flex-wrap:wrap;gap:24px;}
+footer h4{color:#fff;font-size:14px;margin:0 0 12px;font-family:'Inter',sans-serif;}
+footer a{color:rgba(255,255,255,.6);font-size:13.5px;display:block;margin-bottom:8px;}
+footer a:hover{color:#fff;}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.12);margin-top:28px;padding-top:18px;font-size:12.5px;color:rgba(255,255,255,.45);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+
+/* ---------- Misc ---------- */
+.empty-state{text-align:center;padding:50px 20px;color:var(--charcoal-soft);}
+.empty-state .icon{font-size:30px;margin-bottom:10px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;}
+.searchbar{position:relative;max-width:360px;}
+.searchbar input{padding-left:38px;}
+.searchbar .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--charcoal-soft);}
+.pill-toggle{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px;}
+.pill-toggle button{border:none;background:none;padding:7px 15px;border-radius:999px;font-size:13px;font-weight:600;color:var(--charcoal-soft);}
+.pill-toggle button.active{background:var(--navy);color:#fff;}
+.divider{height:1px;background:var(--line);margin:26px 0;}
+.locked-note{display:flex;gap:12px;align-items:flex-start;background:var(--light-gray);border:1px solid var(--line);border-radius:var(--radius);padding:18px;font-size:14px;color:var(--charcoal-soft);}
+.pagination{display:flex;gap:6px;justify-content:center;margin-top:18px;}
+.pagination button{border:1px solid var(--line);background:#fff;padding:7px 13px;border-radius:8px;font-size:13px;}
+.pagination button.active{background:var(--navy);color:#fff;border-color:var(--navy);}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="container topnav-inner">
+    <a href="#/" class="brand"><span class="seal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></span> Summer Project</a>
+    <nav class="navlinks" id="navlinks">
+      <a href="#/" data-route="/">Home</a>
+      <a href="#/venues" data-route="/venues">Venues</a>
+      <a href="#/bookings" data-route="/bookings">Bookings</a>
+      <a href="#/customers" data-route="/customers">Customers</a>
+      <a href="#/dashboard" data-route="/dashboard">Dashboard</a>
+      <a href="#/about" data-route="/about">About</a>
+    </nav>
+    <div class="navcta">
+      <span id="authArea"></span>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</div>
+
+<main id="view"></main>
+
+<footer>
+  <div class="container foot-inner">
+    <div style="max-width:280px;">
+      <h4 style="font-family:'Playfair Display',serif;font-size:18px;">Summer Project</h4>
+      <p style="font-size:13.5px;color:rgba(255,255,255,.6);">A wedding venue management platform — booking, venue, and reporting tools built for one thing: getting the details right.</p>
+    </div>
+    <div>
+      <h4>Manage</h4>
+      <a href="#/venues">Venues</a>
+      <a href="#/bookings">Bookings</a>
+      <a href="#/customers">Customers</a>
+    </div>
+    <div>
+      <h4>Studio</h4>
+      <a href="#/dashboard">Dashboard</a>
+      <a href="#/dashboard/reports">Reports</a>
+      <a href="#/about">About</a>
+    </div>
+    <div>
+      <h4>Support</h4>
+      <a href="#/contact">Contact</a>
+      <a href="#/login">Admin Login</a>
+    </div>
+  </div>
+  <div class="container foot-bottom">
+    <span>© 2026 Summer Project — Wedding Venue Management System</span>
+    <span>Built by Anisha · BCA, JIMS Rohini, Delhi</span>
+  </div>
+</footer>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+/* =========================================================================
+   WEDDING VENUE MANAGEMENT SYSTEM — web edition
+   Faithful re-implementation of the original C++ console app's business
+   rules (validation, booking IDs, double-booking checks, reports) inside
+   a single-page interface. Data persists per-account via window.storage.
+   ========================================================================= */
+
+const ADMIN_USER = "anisha";
+const ADMIN_PASS = "anisha123";
+const STATUS_LIST = ["Confirmed","Pending","Completed","Cancelled"];
+
+let state = {
+  venues: [],
+  bookings: [],
+  isAdmin: false,
+  loaded: false
+};
+
+/* ---------------- seed data ---------------- */
+function seedVenues(){
+  return [
+    {id:101,name:"The Grand Sapphire Banquet",address:"Sector 29, Rohini, Delhi",capacity:400,price:250000,contact:"9811223344",availability:"Yes"},
+    {id:102,name:"Ivory Gardens",address:"Chattarpur, New Delhi",capacity:300,price:180000,contact:"9822334455",availability:"Yes"},
+    {id:103,name:"Royal Crescent Palace",address:"Mehrauli, New Delhi",capacity:650,price:420000,contact:"9833445566",availability:"Yes"},
+    {id:104,name:"The Terrace Bloom",address:"Vasant Kunj, New Delhi",capacity:150,price:95000,contact:"9844556677",availability:"No"}
+  ];
+}
+function seedBookings(){ return []; }
+
+/* ---------------- storage ---------------- */
+async function loadData(){
+  try{
+    const v = await window.storage.get('wvms_venues_v1', false);
+    state.venues = JSON.parse(v.value);
+  }catch(e){ state.venues = seedVenues(); await saveVenues(); }
+  try{
+    const b = await window.storage.get('wvms_bookings_v1', false);
+    state.bookings = JSON.parse(b.value);
+  }catch(e){ state.bookings = seedBookings(); await saveBookings(); }
+  state.loaded = true;
+}
+async function saveVenues(){
+  try{ await window.storage.set('wvms_venues_v1', JSON.stringify(state.venues), false); }
+  catch(e){ console.error('save venues failed', e); }
+}
+async function saveBookings(){
+  try{ await window.storage.set('wvms_bookings_v1', JSON.stringify(state.bookings), false); }
+  catch(e){ console.error('save bookings failed', e); }
+}
+async function resetDemoData(){
+  state.venues = seedVenues();
+  state.bookings = seedBookings();
+  await saveVenues(); await saveBookings();
+  toast('Demo data reset.','success');
+  render();
+}
+
+/* ---------------- validation helpers (mirroring the C++ rules) ---------------- */
+function validatePhone(p){ return /^[0-9]{10}$/.test(p||""); }
+function validateEmail(e){
+  if(!e) return false;
+  const at = (e.match(/@/g)||[]).length;
+  const dot = (e.match(/\./g)||[]).length;
+  if(at !== 1 || dot < 1) return false;
+  if(e[0]==="@" || e[e.length-1]==="@") return false;
+  return true;
+}
+function todayStr(){
+  const d = new Date();
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+function dateValueOf(dd,mm,yyyy){ return yyyy*10000+mm*100+dd; }
+function validateDate(str){
+  if(!/^\d{2}\/\d{2}\/\d{4}$/.test(str||"")) return {ok:false,msg:"Use DD/MM/YYYY format."};
+  const [ddS,mmS,yyyyS] = str.split('/');
+  const day = parseInt(ddS,10), month = parseInt(mmS,10), year = parseInt(yyyyS,10);
+  if(day<1||day>31) return {ok:false,msg:"Day must be between 01 and 31."};
+  if(month<1||month>12) return {ok:false,msg:"Month must be between 01 and 12."};
+  const daysInMonth=[31,28,31,30,31,30,31,31,30,31,30,31];
+  let maxDays = daysInMonth[month-1];
+  if(month===2 && ((year%4===0 && year%100!==0)||year%400===0)) maxDays = 29;
+  if(day>maxDays) return {ok:false,msg:`That month only has ${maxDays} days.`};
+  const t = new Date();
+  const todayVal = dateValueOf(t.getDate(), t.getMonth()+1, t.getFullYear());
+  const val = dateValueOf(day,month,year);
+  if(val < todayVal) return {ok:false,msg:"Wedding date cannot be in the past."};
+  return {ok:true};
+}
+function isVenueBookedOnDate(venueId, weddingDate, excludeBookingId){
+  return state.bookings.some(b => b.venueId===venueId && b.weddingDate===weddingDate && b.status!=="Cancelled" && b.id!==excludeBookingId);
+}
+function generateBookingId(){
+  let max = 1000;
+  state.bookings.forEach(b=>{ if(b.id>max) max=b.id; });
+  return max+1;
+}
+function money(n){ return "₹" + Number(n||0).toLocaleString('en-IN'); }
+
+/* ---------------- toast ---------------- */
+function toast(msg, kind){
+  const wrap = document.getElementById('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + (kind||'');
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+/* ---------------- modal ---------------- */
+function openModal(html){
+  const overlay = document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.id='activeModal';
+  overlay.innerHTML = `<div class="modal">${html}</div>`;
+  overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+  document.body.appendChild(overlay);
+}
+function closeModal(){
+  const m = document.getElementById('activeModal');
+  if(m) m.remove();
+}
+
+/* ---------------- auth ---------------- */
+function renderAuthArea(){
+  const el = document.getElementById('authArea');
+  if(state.isAdmin){
+    el.innerHTML = `<button class="btn btn-ghost btn-sm" onclick="logoutAdmin()">Log out</button>`;
+  } else {
+    el.innerHTML = `<a href="#/login" class="btn btn-navy btn-sm">Admin Login</a>`;
+  }
+}
+function logoutAdmin(){
+  state.isAdmin = false;
+  toast('Logged out.','');
+  location.hash = '#/';
+  render();
+}
+
+/* ---------------- router ---------------- */
+window.addEventListener('hashchange', render);
+document.getElementById('hamburgerBtn').addEventListener('click', ()=>{
+  document.getElementById('navlinks').classList.toggle('mobile-open');
+});
+
+function currentPath(){
+  let h = location.hash.replace(/^#/,'');
+  if(h==='') h = '/';
+  return h;
+}
+
+async function render(){
+  if(!state.loaded) await loadData();
+  document.getElementById('navlinks').classList.remove('mobile-open');
+  highlightNav();
+  const path = currentPath();
+  const view = document.getElementById('view');
+  window.scrollTo({top:0,behavior:'instant'});
+  renderAuthArea();
+
+  if(path === '/') view.innerHTML = pageLanding();
+  else if(path === '/login') view.innerHTML = pageLogin();
+  else if(path.startsWith('/venues')) view.innerHTML = pageVenues();
+  else if(path.startsWith('/bookings')) view.innerHTML = pageBookings();
+  else if(path.startsWith('/customers')) view.innerHTML = pageCustomers();
+  else if(path.startsWith('/dashboard/reports')) view.innerHTML = pageReports();
+  else if(path.startsWith('/dashboard')) view.innerHTML = pageDashboard();
+  else if(path === '/about') view.innerHTML = pageAbout();
+  else if(path === '/contact') view.innerHTML = pageContact();
+  else view.innerHTML = pageLanding();
+
+  afterRenderHooks(path);
+}
+function highlightNav(){
+  const path = currentPath();
+  document.querySelectorAll('.navlinks a').forEach(a=>{
+    const r = a.getAttribute('data-route');
+    a.classList.toggle('active', r===path || (r!=='/' && path.startsWith(r)));
+  });
+}
+
+/* =========================================================================
+   PAGE: LANDING
+   ========================================================================= */
+function pageLanding(){
+  const totalVenues = state.venues.length;
+  const available = state.venues.filter(v=>v.availability==='Yes').length;
+  const activeBookings = state.bookings.filter(b=>b.status!=='Cancelled').length;
+  return `
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-emblem fade-up"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></div>
+      <div class="hero-eyebrow fade-up delay-1">Wedding Venue Management System</div>
+      <h1 class="fade-up delay-1">Every wedding venue,<br><em>booked with certainty.</em></h1>
+      <p class="fade-up delay-2">Browse venues, confirm a booking, and track every date, payment, and guest count from one place — built to replace the clipboard entirely.</p>
+      <div class="hero-actions fade-up delay-3">
+        <a href="#/venues" class="btn btn-emerald">Get Started</a>
+        <a href="#/bookings" class="btn btn-ghost" style="color:#fff;border-color:rgba(255,255,255,.3);">Book a Venue</a>
+      </div>
+      <div class="hero-stats fade-up delay-4">
+        <div class="hero-stat"><div class="num">${totalVenues}</div><div class="lbl">Venues Listed</div></div>
+        <div class="hero-stat"><div class="num">${available}</div><div class="lbl">Available Now</div></div>
+        <div class="hero-stat"><div class="num">${activeBookings}</div><div class="lbl">Active Bookings</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head" style="text-align:center;margin:0 auto 40px;">
+        <div class="eyebrow" style="text-align:center;">What it handles</div>
+        <h2>One system, every part of the booking</h2>
+        <p style="margin:0 auto;">From the first venue search to the final payment reconciliation.</p>
+      </div>
+      <div class="grid3">
+        <div class="feature-card">
+          <div class="feature-icon">⌂</div>
+          <h3>Venue Management</h3>
+          <p>List venues with capacity, pricing, and availability — searchable and editable by admins, browsable by everyone.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✦</div>
+          <h3>Booking Workflow</h3>
+          <p>Book, search, update, or cancel a wedding date — with automatic double-booking protection and live balance tracking.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">▤</div>
+          <h3>Reports &amp; Insights</h3>
+          <p>Eleven built-in reports covering revenue, pending payments, popular venues, and the full booking status breakdown.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-gray">
+    <div class="container">
+      <div class="flex-between" style="margin-bottom:26px;">
+        <div>
+          <div class="eyebrow">Featured venues</div>
+          <h2 style="margin:0;font-size:26px;color:var(--navy);">A few places to start</h2>
+        </div>
+        <a href="#/venues" class="btn btn-ghost btn-sm">View all venues →</a>
+      </div>
+      <div class="venue-grid">
+        ${state.venues.slice(0,3).map(v=>venueCardHtml(v,false)).join('')}
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+/* =========================================================================
+   PAGE: LOGIN
+   ========================================================================= */
+function pageLogin(){
+  if(state.isAdmin){
+    return `
+    <section class="section"><div class="container" style="max-width:480px;">
+      <div class="card card-pad fade-up" style="text-align:center;">
+        <div class="hero-emblem" style="border-color:var(--navy);color:var(--navy);margin-bottom:18px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></div>
+        <h2 style="margin:0 0 8px;color:var(--navy);">You're already signed in</h2>
+        <p style="color:var(--charcoal-soft);margin-bottom:22px;">Welcome back, Admin.</p>
+        <a href="#/dashboard" class="btn btn-navy btn-block">Go to Dashboard</a>
+      </div>
+    </div></section>`;
+  }
+  return `
+  <section class="section"><div class="container" style="max-width:440px;">
+    <div class="breadcrumb"><a href="#/">Home</a> / Admin Login</div>
+    <div class="card card-pad fade-up">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div class="hero-emblem" style="border-color:var(--navy);color:var(--navy);margin:0 auto 14px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></div>
+        <h2 style="margin:0 0 6px;color:var(--navy);">Admin Login</h2>
+        <p style="color:var(--charcoal-soft);font-size:14px;margin:0;">Manage venues, bookings, and reports.</p>
+      </div>
+      <form id="loginForm">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="loginUser" placeholder="Enter username" autocomplete="username">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="loginPass" placeholder="Enter password" autocomplete="current-password">
+        </div>
+        <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13.5px;color:var(--charcoal-soft);margin-bottom:18px;">
+          <input type="checkbox" id="rememberMe" style="width:auto;"> Remember me
+        </label>
+        <div id="loginErr" class="err" style="display:none;margin-bottom:12px;"></div>
+        <button type="submit" class="btn btn-navy btn-block">Log In</button>
+        <div style="text-align:center;margin-top:14px;">
+          <a href="#" onclick="toast('Password resets aren\\'t wired up in this demo yet.',''); return false;" style="font-size:13px;color:var(--navy-soft);">Forgot password?</a>
+        </div>
+      </form>
+    </div>
+  </div></section>`;
+}
+
+/* =========================================================================
+   PAGE: VENUES
+   ========================================================================= */
+let venueSearchTerm = '';
+function venueCardHtml(v, showAdminControls){
+  return `
+  <div class="venue-card fade-up">
+    <div class="venue-media">
+      <span class="venue-id-tag mono">#${v.id}</span>
+      <span class="venue-monogram">${v.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</span>
+    </div>
+    <div class="venue-body">
+      <div class="flex-between" style="align-items:flex-start;">
+        <h3>${escapeHtml(v.name)}</h3>
+        <span class="badge ${v.availability==='Yes'?'badge-avail':'badge-unavail'}">${v.availability==='Yes'?'Available':'Reserved'}</span>
+      </div>
+      <div class="venue-meta">
+        <span>📍 ${escapeHtml(v.address)}</span>
+        <span>Capacity: ${v.capacity} guests</span>
+        <span>Contact: ${v.contact}</span>
+      </div>
+      <div class="venue-price">${money(v.price)} <span>/ day</span></div>
+      <div class="venue-foot">
+        <a href="#/bookings?venue=${v.id}" onclick="prefillVenue(${v.id})" class="btn btn-emerald btn-sm" style="flex:1;">Book Now</a>
+        ${showAdminControls ? `
+          <button class="btn btn-ghost btn-sm" onclick="openEditVenueModal(${v.id})">Edit</button>
+          <button class="btn btn-crimson btn-sm" onclick="confirmDeleteVenue(${v.id})">Delete</button>
+        ` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+function pageVenues(){
+  const term = venueSearchTerm.trim().toLowerCase();
+  const filtered = state.venues.filter(v => !term || v.name.toLowerCase().includes(term) || String(v.id).includes(term));
+  return `
+  <section class="section-tight"><div class="container">
+    <div class="breadcrumb"><a href="#/">Home</a> / Venues</div>
+    <div class="section-head flex-between" style="margin-bottom:22px;">
+      <div>
+        <div class="eyebrow">Venue Management</div>
+        <h2 style="margin:0;">Browse available venues</h2>
+      </div>
+      ${state.isAdmin ? `<button class="btn btn-navy" onclick="openAddVenueModal()">+ Add Venue</button>` : ''}
+    </div>
+    <div class="flex-between" style="margin-bottom:24px;">
+      <div class="searchbar">
+        <span class="icon">⌕</span>
+        <input type="text" placeholder="Search by venue name or ID..." value="${escapeAttr(venueSearchTerm)}" oninput="venueSearchTerm=this.value; rerenderVenueGrid();">
+      </div>
+      <span style="font-size:13.5px;color:var(--charcoal-soft);">${filtered.length} venue${filtered.length!==1?'s':''}</span>
+    </div>
+    ${!state.isAdmin ? `<div class="locked-note" style="margin-bottom:22px;"><span>🔒</span><span>Signed in as Admin, you can add, edit, or remove venues. <a href="#/login" style="color:var(--navy);font-weight:600;">Log in</a> to manage listings.</span></div>` : ''}
+    <div class="venue-grid" id="venueGrid">
+      ${filtered.length ? filtered.map(v=>venueCardHtml(v, state.isAdmin)).join('') : emptyState('No venues match your search.','⌕')}
+    </div>
+  </div></section>`;
+}
+function rerenderVenueGrid(){
+  const grid = document.getElementById('venueGrid');
+  const term = venueSearchTerm.trim().toLowerCase();
+  const filtered = state.venues.filter(v => !term || v.name.toLowerCase().includes(term) || String(v.id).includes(term));
+  grid.innerHTML = filtered.length ? filtered.map(v=>venueCardHtml(v, state.isAdmin)).join('') : emptyState('No venues match your search.','⌕');
+}
+function prefillVenue(id){ window.__prefillVenueId = id; }
+
+function openAddVenueModal(){
+  openModal(`
+    <h3>Add New Venue</h3>
+    <div class="sub">Fields mirror the original console entry form.</div>
+    <form id="venueForm">
+      <div class="form-grid">
+        <div class="field"><label>Venue ID</label><input type="number" id="vId" placeholder="e.g. 105"></div>
+        <div class="field"><label>Capacity</label><input type="number" id="vCap" placeholder="e.g. 300"></div>
+      </div>
+      <div class="field"><label>Venue Name</label><input type="text" id="vName" placeholder="e.g. The Willow Court"></div>
+      <div class="field"><label>Address</label><input type="text" id="vAddr" placeholder="Full address"></div>
+      <div class="form-grid">
+        <div class="field"><label>Price Per Day</label><input type="number" id="vPrice" placeholder="e.g. 150000"></div>
+        <div class="field"><label>Contact Number</label><input type="text" id="vContact" placeholder="10 digit number" maxlength="10"></div>
+      </div>
+      <div id="venueErr" class="err" style="display:none;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-navy">Save Venue</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('venueForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const id = parseInt(document.getElementById('vId').value,10);
+    const name = document.getElementById('vName').value.trim();
+    const addr = document.getElementById('vAddr').value.trim();
+    const cap = parseInt(document.getElementById('vCap').value,10);
+    const price = parseFloat(document.getElementById('vPrice').value);
+    const contact = document.getElementById('vContact').value.trim();
+    const errEl = document.getElementById('venueErr');
+    const showErr = (m)=>{ errEl.textContent=m; errEl.style.display='block'; };
+
+    if(!id || id<=0) return showErr('Venue ID must be a positive number.');
+    if(state.venues.some(v=>v.id===id)) return showErr('Venue ID already exists. Use a different ID.');
+    if(!name) return showErr('Venue Name cannot be empty.');
+    if(!addr) return showErr('Venue Address cannot be empty.');
+    if(!cap || cap<=0) return showErr('Capacity must be greater than zero.');
+    if(!price || price<=0) return showErr('Price Per Day must be greater than zero.');
+    if(!validatePhone(contact)) return showErr('Contact Number must be exactly 10 digits.');
+
+    state.venues.push({id,name,address:addr,capacity:cap,price,contact,availability:'Yes'});
+    await saveVenues();
+    closeModal();
+    toast('Venue added successfully.','success');
+    render();
+  });
+}
+function openEditVenueModal(id){
+  const v = state.venues.find(v=>v.id===id);
+  if(!v) return;
+  openModal(`
+    <h3>Update Venue #${v.id}</h3>
+    <div class="sub">Leave a field as-is to keep its current value.</div>
+    <form id="venueEditForm">
+      <div class="form-grid">
+        <div class="field"><label>Capacity <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${v.capacity})</span></label><input type="number" id="eCap" placeholder="${v.capacity}"></div>
+        <div class="field"><label>Price / Day <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${v.price})</span></label><input type="number" id="ePrice" placeholder="${v.price}"></div>
+      </div>
+      <div class="field"><label>Contact Number <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${v.contact})</span></label><input type="text" id="eContact" placeholder="${v.contact}" maxlength="10"></div>
+      <div class="field"><label>Availability</label>
+        <select id="eAvail">
+          <option value="Yes" ${v.availability==='Yes'?'selected':''}>Yes</option>
+          <option value="No" ${v.availability==='No'?'selected':''}>No</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-navy">Save Changes</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('venueEditForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const capVal = document.getElementById('eCap').value;
+    const priceVal = document.getElementById('ePrice').value;
+    const contactVal = document.getElementById('eContact').value.trim();
+    const availVal = document.getElementById('eAvail').value;
+    let notes = [];
+    if(capVal !== ''){ const c = parseInt(capVal,10); if(c>0) v.capacity=c; else notes.push('Invalid capacity — kept old value.'); }
+    if(priceVal !== ''){ const p = parseFloat(priceVal); if(p>0) v.price=p; else notes.push('Invalid price — kept old value.'); }
+    if(contactVal !== ''){ if(validatePhone(contactVal)) v.contact=contactVal; else notes.push('Invalid phone — kept old value.'); }
+    v.availability = availVal;
+    await saveVenues();
+    closeModal();
+    notes.forEach(n=>toast(n,'error'));
+    toast('Venue updated successfully.','success');
+    render();
+  });
+}
+function confirmDeleteVenue(id){
+  const v = state.venues.find(v=>v.id===id);
+  if(!v) return;
+  openModal(`
+    <h3>Delete "${escapeHtml(v.name)}"?</h3>
+    <div class="sub">This can't be undone. Existing bookings for this venue will remain on record.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-crimson" onclick="doDeleteVenue(${id})">Delete Venue</button>
+    </div>
+  `);
+}
+async function doDeleteVenue(id){
+  state.venues = state.venues.filter(v=>v.id!==id);
+  await saveVenues();
+  closeModal();
+  toast('Venue deleted.','success');
+  render();
+}
+
+/* =========================================================================
+   PAGE: BOOKINGS
+   ========================================================================= */
+let bookingTab = 'book';
+let bookingSearchTerm = '';
+let bookingSearchMode = 'id';
+
+function statusBadge(status){
+  const cls = {Confirmed:'badge-confirmed',Cancelled:'badge-cancelled',Completed:'badge-completed',Pending:'badge-pending'}[status]||'badge-pending';
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function pageBookings(){
+  return `
+  <section class="section-tight"><div class="container">
+    <div class="breadcrumb"><a href="#/">Home</a> / Bookings</div>
+    <div class="section-head" style="margin-bottom:10px;">
+      <div class="eyebrow">Booking System</div>
+      <h2 style="margin:0;">Book, track, and manage weddings</h2>
+      <p>Open to every visitor — the same way the original console app let anyone book, search, update, or cancel without an admin login.</p>
+    </div>
+    <div class="tabbar">
+      <button class="${bookingTab==='book'?'active':''}" onclick="setBookingTab('book')">Book a Venue</button>
+      <button class="${bookingTab==='manage'?'active':''}" onclick="setBookingTab('manage')">View &amp; Manage Bookings</button>
+    </div>
+    <div id="bookingTabContent">${bookingTab==='book' ? bookVenueFormHtml() : manageBookingsHtml()}</div>
+  </div></section>`;
+}
+function setBookingTab(tab){
+  bookingTab = tab;
+  document.getElementById('bookingTabContent').innerHTML = tab==='book' ? bookVenueFormHtml() : manageBookingsHtml();
+  document.querySelectorAll('.tabbar button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  if(tab==='book') attachBookingFormHandlers();
+}
+
+function bookVenueFormHtml(){
+  const availableVenues = state.venues;
+  const preselect = window.__prefillVenueId || '';
+  return `
+  <div class="card card-pad fade-in" style="max-width:640px;">
+    <form id="bookForm">
+      <div class="field">
+        <label>Venue</label>
+        <select id="bVenue">
+          <option value="">Select a venue…</option>
+          ${availableVenues.map(v=>`<option value="${v.id}" ${String(v.id)===String(preselect)?'selected':''}>#${v.id} — ${escapeHtml(v.name)} (${money(v.price)}/day)</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Customer Name</label><input type="text" id="bCustomer" placeholder="Full name"></div>
+        <div class="field"><label>Phone Number</label><input type="text" id="bPhone" placeholder="10 digit number" maxlength="10"></div>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label>Bride's Name</label><input type="text" id="bBride" placeholder="Bride's name"></div>
+        <div class="field"><label>Groom's Name</label><input type="text" id="bGroom" placeholder="Groom's name"></div>
+      </div>
+      <div class="field"><label>Email</label><input type="email" id="bEmail" placeholder="name@example.com"></div>
+      <div class="form-grid">
+        <div class="field"><label>Wedding Date</label><input type="text" id="bDate" placeholder="DD/MM/YYYY"></div>
+        <div class="field"><label>Number of Guests</label><input type="number" id="bGuests" placeholder="e.g. 200"></div>
+      </div>
+      <div class="field">
+        <label>Advance Paid</label>
+        <input type="number" id="bAdvance" placeholder="0">
+        <div class="hint" id="advanceHint">Total amount is set by the venue's price per day.</div>
+      </div>
+      <div class="field"><label>Special Requirements <span style="font-weight:400;color:var(--charcoal-soft);">(optional)</span></label><textarea id="bNotes" rows="2" placeholder="Décor, catering preferences, seating..."></textarea></div>
+      <div id="bookErr" class="err" style="display:none;"></div>
+      <button type="submit" class="btn btn-emerald btn-block">Confirm Booking</button>
+    </form>
+  </div>`;
+}
+function attachBookingFormHandlers(){
+  const form = document.getElementById('bookForm');
+  if(!form) return;
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const errEl = document.getElementById('bookErr');
+    const showErr = (m)=>{ errEl.textContent=m; errEl.style.display='block'; };
+    errEl.style.display='none';
+
+    const venueId = parseInt(document.getElementById('bVenue').value,10);
+    const customerName = document.getElementById('bCustomer').value.trim();
+    const brideName = document.getElementById('bBride').value.trim();
+    const groomName = document.getElementById('bGroom').value.trim();
+    const phone = document.getElementById('bPhone').value.trim();
+    const email = document.getElementById('bEmail').value.trim();
+    const weddingDate = document.getElementById('bDate').value.trim();
+    const guests = parseInt(document.getElementById('bGuests').value,10);
+    const advance = parseFloat(document.getElementById('bAdvance').value || '0');
+
+    if(!venueId) return showErr('Please select a venue.');
+    const venue = state.venues.find(v=>v.id===venueId);
+    if(!venue) return showErr('Selected venue does not exist.');
+    if(!customerName) return showErr('Customer Name cannot be empty.');
+    if(!brideName) return showErr("Bride's Name cannot be empty.");
+    if(!groomName) return showErr("Groom's Name cannot be empty.");
+    if(!validatePhone(phone)) return showErr('Phone Number must be exactly 10 digits.');
+    if(!validateEmail(email)) return showErr("Email must contain exactly one '@' and at least one '.'");
+    const dv = validateDate(weddingDate);
+    if(!dv.ok) return showErr(dv.msg);
+    if(isVenueBookedOnDate(venueId, weddingDate, -1)) return showErr('This venue is already booked on that date.');
+    if(!guests || guests<=0) return showErr('Number of guests must be greater than zero.');
+
+    const totalAmount = venue.price;
+    if(advance < 0) return showErr('Advance amount cannot be negative.');
+    if(advance > totalAmount) return showErr('Advance amount cannot exceed the total amount.');
+
+    const booking = {
+      id: generateBookingId(),
+      customerName, brideName, groomName, phone, email,
+      weddingDate, bookingDate: todayStr(),
+      venueId, venueName: venue.name,
+      guests, totalAmount, advancePaid: advance,
+      remainingAmount: totalAmount - advance,
+      status: 'Confirmed'
+    };
+    state.bookings.push(booking);
+    await saveBookings();
+    window.__prefillVenueId = null;
+    showBookingTicket(booking);
+  });
+}
+function showBookingTicket(b){
+  document.getElementById('bookingTabContent').innerHTML = `
+    <div class="ticket fade-up" style="max-width:420px;">
+      <div class="ticket-top">
+        <div class="ticket-seal"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></div>
+        <h3 style="margin:0;color:#fff;font-size:19px;">Booking Confirmed</h3>
+        <div style="font-size:13px;color:rgba(255,255,255,.75);margin-top:4px;">${escapeHtml(b.venueName)}</div>
+        <span class="status">${b.status}</span>
+      </div>
+      <div class="ticket-tear"></div>
+      <div class="ticket-dash"></div>
+      <div class="ticket-body">
+        <div class="ticket-code mono">#${b.id}</div>
+        <div class="ticket-row"><span class="k">Customer</span><span class="v">${escapeHtml(b.customerName)}</span></div>
+        <div class="ticket-row"><span class="k">Wedding Date</span><span class="v">${b.weddingDate}</span></div>
+        <div class="ticket-row"><span class="k">Guests</span><span class="v">${b.guests}</span></div>
+        <div class="ticket-row"><span class="k">Total Amount</span><span class="v">${money(b.totalAmount)}</span></div>
+        <div class="ticket-row"><span class="k">Advance Paid</span><span class="v">${money(b.advancePaid)}</span></div>
+        <div class="ticket-row"><span class="k">Remaining</span><span class="v">${money(b.remainingAmount)}</span></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;">
+      <button class="btn btn-navy" onclick="setBookingTab('manage')">View All Bookings</button>
+      <button class="btn btn-ghost" onclick="setBookingTab('book')">Book Another</button>
+    </div>
+  `;
+  toast('Booking confirmed!','success');
+}
+
+function manageBookingsHtml(){
+  const term = bookingSearchTerm.trim().toLowerCase();
+  let list = state.bookings;
+  if(term){
+    list = list.filter(b => bookingSearchMode==='id'
+      ? String(b.id).includes(term)
+      : b.customerName.toLowerCase().includes(term));
+  }
+  list = [...list].sort((a,b)=>b.id-a.id);
+  return `
+  <div class="flex-between" style="margin-bottom:18px;">
+    <div class="searchbar">
+      <span class="icon">⌕</span>
+      <input type="text" placeholder="${bookingSearchMode==='id'?'Search by Booking ID...':'Search by Customer Name...'}" value="${escapeAttr(bookingSearchTerm)}" oninput="bookingSearchTerm=this.value; rerenderBookingTable();">
+    </div>
+    <div class="pill-toggle">
+      <button class="${bookingSearchMode==='id'?'active':''}" onclick="bookingSearchMode='id'; rerenderBookingTable();">By ID</button>
+      <button class="${bookingSearchMode==='name'?'active':''}" onclick="bookingSearchMode='name'; rerenderBookingTable();">By Name</button>
+    </div>
+  </div>
+  <div id="bookingTableWrap">${bookingTableHtml(list)}</div>
+  `;
+}
+function bookingTableHtml(list){
+  if(!list.length) return emptyState('No bookings found.','▤');
+  return `
+  <div class="table-wrap"><table>
+    <thead><tr>
+      <th>Booking ID</th><th>Customer</th><th>Venue</th><th>Wedding Date</th><th>Balance</th><th>Status</th><th></th>
+    </tr></thead>
+    <tbody>
+      ${list.map(b=>`
+        <tr>
+          <td class="mono">#${b.id}</td>
+          <td>${escapeHtml(b.customerName)}</td>
+          <td>${escapeHtml(b.venueName)}</td>
+          <td>${b.weddingDate}</td>
+          <td>${money(b.remainingAmount)}</td>
+          <td>${statusBadge(b.status)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="btn btn-ghost btn-sm" onclick="viewBookingModal(${b.id})">View</button>
+              <button class="btn btn-ghost btn-sm" onclick="openEditBookingModal(${b.id})" ${b.status==='Cancelled'?'disabled':''}>Edit</button>
+              <button class="btn btn-crimson btn-sm" onclick="confirmCancelBooking(${b.id})" ${b.status==='Cancelled'?'disabled':''}>Cancel</button>
+            </div>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table></div>`;
+}
+function rerenderBookingTable(){
+  const term = bookingSearchTerm.trim().toLowerCase();
+  let list = state.bookings;
+  if(term){
+    list = list.filter(b => bookingSearchMode==='id'
+      ? String(b.id).includes(term)
+      : b.customerName.toLowerCase().includes(term));
+  }
+  list = [...list].sort((a,b)=>b.id-a.id);
+  document.getElementById('bookingTableWrap').innerHTML = bookingTableHtml(list);
+}
+function viewBookingModal(id){
+  const b = state.bookings.find(x=>x.id===id);
+  if(!b) return;
+  openModal(`
+    <h3>Booking #${b.id}</h3>
+    <div class="sub">${statusBadge(b.status)}</div>
+    <div class="ticket-row"><span class="k">Customer</span><span class="v">${escapeHtml(b.customerName)}</span></div>
+    <div class="ticket-row"><span class="k">Bride / Groom</span><span class="v">${escapeHtml(b.brideName)} &amp; ${escapeHtml(b.groomName)}</span></div>
+    <div class="ticket-row"><span class="k">Phone</span><span class="v">${b.phone}</span></div>
+    <div class="ticket-row"><span class="k">Email</span><span class="v">${escapeHtml(b.email)}</span></div>
+    <div class="ticket-row"><span class="k">Venue</span><span class="v">${escapeHtml(b.venueName)}</span></div>
+    <div class="ticket-row"><span class="k">Wedding Date</span><span class="v">${b.weddingDate}</span></div>
+    <div class="ticket-row"><span class="k">Booked On</span><span class="v">${b.bookingDate}</span></div>
+    <div class="ticket-row"><span class="k">Guests</span><span class="v">${b.guests}</span></div>
+    <div class="ticket-row"><span class="k">Total</span><span class="v">${money(b.totalAmount)}</span></div>
+    <div class="ticket-row"><span class="k">Advance Paid</span><span class="v">${money(b.advancePaid)}</span></div>
+    <div class="ticket-row"><span class="k">Remaining</span><span class="v">${money(b.remainingAmount)}</span></div>
+    <div class="modal-actions"><button class="btn btn-navy" onclick="closeModal()">Close</button></div>
+  `);
+}
+function openEditBookingModal(id){
+  const b = state.bookings.find(x=>x.id===id);
+  if(!b) return;
+  openModal(`
+    <h3>Update Booking #${b.id}</h3>
+    <div class="sub">Leave a field blank to keep its current value.</div>
+    <form id="editBookingForm">
+      <div class="field"><label>Phone <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${b.phone})</span></label><input type="text" id="ubPhone" placeholder="${b.phone}" maxlength="10"></div>
+      <div class="field"><label>Wedding Date <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${b.weddingDate})</span></label><input type="text" id="ubDate" placeholder="DD/MM/YYYY"></div>
+      <div class="field"><label>Number of Guests <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${b.guests})</span></label><input type="number" id="ubGuests" placeholder="${b.guests}"></div>
+      <div class="field"><label>Advance Paid <span style="font-weight:400;color:var(--charcoal-soft);">(current: ${b.advancePaid}, total: ${b.totalAmount})</span></label><input type="number" id="ubAdvance" placeholder="${b.advancePaid}"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-navy">Save Changes</button>
+      </div>
+    </form>
+  `);
+  document.getElementById('editBookingForm').addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const notes = [];
+    const phoneVal = document.getElementById('ubPhone').value.trim();
+    const dateVal = document.getElementById('ubDate').value.trim();
+    const guestsVal = document.getElementById('ubGuests').value;
+    const advanceVal = document.getElementById('ubAdvance').value;
+
+    if(phoneVal){ if(validatePhone(phoneVal)) b.phone=phoneVal; else notes.push('Invalid phone — kept old value.'); }
+    if(dateVal){
+      const dv = validateDate(dateVal);
+      if(dv.ok){
+        if(isVenueBookedOnDate(b.venueId, dateVal, b.id)) notes.push('Venue already booked on that date — date not changed.');
+        else b.weddingDate = dateVal;
+      } else notes.push(`Invalid date (${dv.msg}) — kept old value.`);
+    }
+    if(guestsVal){ const g = parseInt(guestsVal,10); if(g>0) b.guests=g; else notes.push('Invalid guest count — kept old value.'); }
+    if(advanceVal !== ''){
+      const a = parseFloat(advanceVal);
+      if(a>=0 && a<=b.totalAmount){ b.advancePaid=a; b.remainingAmount=b.totalAmount-a; }
+      else notes.push('Invalid advance amount — kept old value.');
+    }
+    await saveBookings();
+    closeModal();
+    notes.forEach(n=>toast(n,'error'));
+    toast('Booking updated successfully.','success');
+    render();
+  });
+}
+function confirmCancelBooking(id){
+  const b = state.bookings.find(x=>x.id===id);
+  if(!b) return;
+  openModal(`
+    <h3>Cancel booking for ${escapeHtml(b.customerName)}?</h3>
+    <div class="sub">Booking #${b.id} — ${b.weddingDate} at ${escapeHtml(b.venueName)}. This can't be undone.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Keep Booking</button>
+      <button class="btn btn-crimson" onclick="doCancelBooking(${id})">Cancel Booking</button>
+    </div>
+  `);
+}
+async function doCancelBooking(id){
+  const b = state.bookings.find(x=>x.id===id);
+  if(!b) return;
+  if(b.status==='Cancelled'){ closeModal(); return toast('Already cancelled.','error'); }
+  b.status='Cancelled';
+  await saveBookings();
+  closeModal();
+  toast('Booking cancelled.','success');
+  render();
+}
+
+/* =========================================================================
+   PAGE: CUSTOMERS (derived from bookings, admin-gated like the original
+   customerListReport, which lived behind Admin Login → Reports)
+   ========================================================================= */
+let customerSearchTerm = '';
+function pageCustomers(){
+  if(!state.isAdmin) return lockedPage('Customers','Customer records are compiled from booking data and sit behind the Reports section in the original system.');
+  const term = customerSearchTerm.trim().toLowerCase();
+  const rows = state.bookings.filter(b => !term || b.customerName.toLowerCase().includes(term));
+  return `
+  <section class="section-tight"><div class="container">
+    <div class="breadcrumb"><a href="#/">Home</a> / Customers</div>
+    <div class="section-head"><div class="eyebrow">Customer List</div><h2 style="margin:0;">All customers on file</h2>
+    <p>Derived from booking records — there's no separate customer database, same as the original system.</p></div>
+    <div class="searchbar" style="margin-bottom:20px;">
+      <span class="icon">⌕</span>
+      <input type="text" placeholder="Search by name..." value="${escapeAttr(customerSearchTerm)}" oninput="customerSearchTerm=this.value; rerenderCustomerTable();">
+    </div>
+    <div id="customerTableWrap">${customerTableHtml(rows)}</div>
+  </div></section>`;
+}
+function customerTableHtml(rows){
+  if(!rows.length) return emptyState('No customers found.','☺');
+  return `<div class="table-wrap"><table>
+    <thead><tr><th>Customer</th><th>Phone</th><th>Wedding Date</th><th>Venue</th><th>Status</th></tr></thead>
+    <tbody>${rows.map(b=>`<tr><td>${escapeHtml(b.customerName)}</td><td>${b.phone}</td><td>${b.weddingDate}</td><td>${escapeHtml(b.venueName)}</td><td>${statusBadge(b.status)}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+function rerenderCustomerTable(){
+  const term = customerSearchTerm.trim().toLowerCase();
+  const rows = state.bookings.filter(b => !term || b.customerName.toLowerCase().includes(term));
+  document.getElementById('customerTableWrap').innerHTML = customerTableHtml(rows);
+}
+
+/* =========================================================================
+   PAGE: DASHBOARD
+   ========================================================================= */
+function sidebarHtml(active){
+  const items = [
+    {href:'#/dashboard', label:'Overview', key:'overview'},
+    {href:'#/dashboard/reports', label:'All Reports', key:'reports'},
+  ];
+  return `<div class="sidebar">
+    <div class="side-label">Admin Console</div>
+    ${items.map(i=>`<a href="${i.href}" class="${active===i.key?'active':''}">${i.label}</a>`).join('')}
+    <div class="side-label">Data</div>
+    <a href="#" onclick="confirmResetDemo(); return false;">Reset demo data</a>
+  </div>`;
+}
+function confirmResetDemo(){
+  openModal(`
+    <h3>Reset demo data?</h3>
+    <div class="sub">This replaces current venues and bookings with the original sample set. Intended for demoing the app, not for real records.</div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-crimson" onclick="resetDemoData(); closeModal();">Reset</button>
+    </div>
+  `);
+}
+function pageDashboard(){
+  if(!state.isAdmin) return lockedPage('Dashboard','Sign in as Admin to see live totals, recent bookings, and venue availability at a glance.');
+  const totalCustomers = new Set(state.bookings.map(b=>b.customerName.toLowerCase())).size;
+  const totalBookings = state.bookings.length;
+  const available = state.venues.filter(v=>v.availability==='Yes').length;
+  const reserved = state.venues.filter(v=>v.availability==='No').length;
+  const revenue = state.bookings.filter(b=>b.status!=='Cancelled').reduce((s,b)=>s+b.advancePaid,0);
+  const recent = [...state.bookings].sort((a,b)=>b.id-a.id).slice(0,5);
+  return `
+  <section class="section-tight"><div class="container">
+    <div class="breadcrumb"><a href="#/">Home</a> / Dashboard</div>
+    <div class="app-layout">
+      ${sidebarHtml('overview')}
+      <div>
+        <div class="section-head"><div class="eyebrow">Admin Dashboard</div><h2 style="margin:0;">Welcome back, Anisha</h2></div>
+        <div class="stat-grid" style="margin-bottom:28px;">
+          <div class="stat-card"><div class="stat-num">${totalCustomers}</div><div class="stat-lbl">Total Customers</div></div>
+          <div class="stat-card"><div class="stat-num">${totalBookings}</div><div class="stat-lbl">Total Bookings</div></div>
+          <div class="stat-card"><div class="stat-num">${available}</div><div class="stat-lbl">Available Venues</div></div>
+          <div class="stat-card"><div class="stat-num">${reserved}</div><div class="stat-lbl">Reserved Venues</div></div>
+        </div>
+        <div class="card card-pad" style="margin-bottom:24px;">
+          <div class="flex-between" style="margin-bottom:6px;"><h3 style="margin:0;font-size:16px;">Advance Collected (Revenue)</h3></div>
+          <div class="venue-price" style="font-size:26px;">${money(revenue)}</div>
+        </div>
+        <div class="card">
+          <div class="card-pad" style="padding-bottom:0;"><h3 style="margin:0 0 4px;font-size:16px;">Recent Bookings</h3></div>
+          ${recent.length ? bookingTableHtml(recent) : `<div class="card-pad">${emptyState('No bookings yet.','▤')}</div>`}
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+}
+
+/* =========================================================================
+   PAGE: REPORTS  (all 11, faithful to the original report logic)
+   ========================================================================= */
+function pageReports(){
+  if(!state.isAdmin) return lockedPage('Reports','Sign in as Admin to view all eleven reports — revenue, pending payments, popular venue, and more.');
+  const b = state.bookings;
+  const v = state.venues;
+  const today = todayStr();
+
+  // 1. Total bookings
+  const completed = b.filter(x=>x.status==='Completed').length;
+  const cancelled = b.filter(x=>x.status==='Cancelled').length;
+
+  // 2. Today's bookings (booked today)
+  const todays = b.filter(x=>x.bookingDate===today);
+
+  // 3. Upcoming weddings (not cancelled)
+  const upcoming = b.filter(x=>x.status!=='Cancelled');
+
+  // 4. Booking history (all)
+  const history = [...b].sort((a,c)=>c.id-a.id);
+
+  // 5. Monthly report (not cancelled, grouped by month of wedding date)
+  const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const monthAgg = Array.from({length:12},()=>({count:0,revenue:0}));
+  b.forEach(x=>{
+    if(x.status!=='Cancelled'){
+      const m = parseInt(x.weddingDate.split('/')[1],10);
+      if(m>=1 && m<=12){ monthAgg[m-1].count++; monthAgg[m-1].revenue += x.totalAmount; }
+    }
+  });
+
+  // 6. Venue wise report
+  const venueAgg = v.map(venue=>{
+    const rel = b.filter(x=>x.venueId===venue.id && x.status!=='Cancelled');
+    return {name:venue.name, bookings:rel.length, revenue:rel.reduce((s,x)=>s+x.totalAmount,0)};
+  });
+
+  // 7. Pending payments
+  const pending = b.filter(x=>x.remainingAmount>0 && x.status!=='Cancelled');
+
+  // 8. Customer list (all)
+  const custList = b;
+
+  // 9. Revenue report
+  const activeB = b.filter(x=>x.status!=='Cancelled');
+  const totalRevenue = activeB.reduce((s,x)=>s+x.totalAmount,0);
+  const advanceCollected = activeB.reduce((s,x)=>s+x.advancePaid,0);
+  const pendingPayments = activeB.reduce((s,x)=>s+x.remainingAmount,0);
+
+  // 10. Popular venue
+  let bestVenue = null, bestCount = -1;
+  v.forEach(venue=>{
+    const cnt = b.filter(x=>x.venueId===venue.id && x.status!=='Cancelled').length;
+    if(cnt>bestCount){ bestCount=cnt; bestVenue=venue; }
+  });
+
+  // 11. Status report
+  const statusCounts = {Confirmed:0,Cancelled:0,Completed:0,Pending:0};
+  b.forEach(x=>{ if(statusCounts[x.status]!==undefined) statusCounts[x.status]++; });
+
+  return `
+  <section class="section-tight"><div class="container">
+    <div class="breadcrumb"><a href="#/">Home</a> / <a href="#/dashboard">Dashboard</a> / Reports</div>
+    <div class="app-layout">
+      ${sidebarHtml('reports')}
+      <div>
+        <div class="section-head"><div class="eyebrow">Reports</div><h2 style="margin:0;">All eleven reports</h2><p>Same logic as the console app's Reports Menu, options 1–11.</p></div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">1. Total Bookings Report</h3>
+          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="stat-card"><div class="stat-num">${b.length}</div><div class="stat-lbl">Total</div></div>
+            <div class="stat-card"><div class="stat-num">${completed}</div><div class="stat-lbl">Completed</div></div>
+            <div class="stat-card"><div class="stat-num">${cancelled}</div><div class="stat-lbl">Cancelled</div></div>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">2. Today's Bookings <span style="font-weight:400;color:var(--charcoal-soft);font-size:13px;">(${today})</span></h3>
+          ${todays.length ? simpleList(todays.map(x=>`#${x.id} · ${escapeHtml(x.customerName)} · ${escapeHtml(x.venueName)}`)) : emptyLine('No bookings made today.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">3. Upcoming Weddings</h3>
+          ${upcoming.length ? simpleList(upcoming.map(x=>`${x.weddingDate} · ${escapeHtml(x.customerName)} · ${escapeHtml(x.venueName)}`)) : emptyLine('No upcoming weddings found.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">4. Booking History</h3>
+          ${history.length ? simpleList(history.map(x=>`${x.bookingDate} · ${escapeHtml(x.customerName)} · ${x.weddingDate} · ${escapeHtml(x.venueName)} · ${money(x.totalAmount)}`)) : emptyLine('No bookings found.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">5. Monthly Report</h3>
+          ${monthAgg.some(m=>m.count>0) ? simpleList(monthAgg.map((m,i)=>m.count>0?`${monthNames[i]} · ${m.count} bookings · ${money(m.revenue)}`:null).filter(Boolean)) : emptyLine('No data yet.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">6. Venue Wise Report</h3>
+          ${venueAgg.length ? simpleList(venueAgg.map(x=>`${escapeHtml(x.name)} · ${x.bookings} bookings · ${money(x.revenue)}`)) : emptyLine('No venues found.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">7. Pending Payments</h3>
+          ${pending.length ? simpleList(pending.map(x=>`${escapeHtml(x.customerName)} · ${x.phone} · Remaining ${money(x.remainingAmount)}`)) : emptyLine('No pending payments.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">8. Customer List</h3>
+          ${custList.length ? simpleList(custList.map(x=>`${escapeHtml(x.customerName)} · ${x.phone} · ${x.weddingDate} · ${escapeHtml(x.venueName)}`)) : emptyLine('No customers found.')}
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">9. Revenue Report</h3>
+          <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+            <div class="stat-card"><div class="stat-num" style="font-size:20px;">${money(totalRevenue)}</div><div class="stat-lbl">Total Revenue</div></div>
+            <div class="stat-card"><div class="stat-num" style="font-size:20px;">${money(advanceCollected)}</div><div class="stat-lbl">Advance Collected</div></div>
+            <div class="stat-card"><div class="stat-num" style="font-size:20px;">${money(pendingPayments)}</div><div class="stat-lbl">Pending Payments</div></div>
+          </div>
+        </div>
+
+        <div class="card card-pad" style="margin-bottom:18px;">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">10. Most Popular Venue</h3>
+          ${bestVenue && bestCount>0 ? `<div class="ticket-row"><span class="k">${escapeHtml(bestVenue.name)}</span><span class="v">${bestCount} bookings</span></div>` : emptyLine('No bookings found yet to determine popularity.')}
+        </div>
+
+        <div class="card card-pad">
+          <h3 style="margin:0 0 12px;font-size:15.5px;">11. Booking Status Report</h3>
+          <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+            <div class="stat-card"><div class="stat-num">${statusCounts.Confirmed}</div><div class="stat-lbl">Confirmed</div></div>
+            <div class="stat-card"><div class="stat-num">${statusCounts.Cancelled}</div><div class="stat-lbl">Cancelled</div></div>
+            <div class="stat-card"><div class="stat-num">${statusCounts.Completed}</div><div class="stat-lbl">Completed</div></div>
+            <div class="stat-card"><div class="stat-num">${statusCounts.Pending}</div><div class="stat-lbl">Pending</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></section>`;
+}
+function simpleList(items){
+  return `<div>${items.map(i=>`<div class="ticket-row"><span class="k" style="color:var(--charcoal);">${i}</span></div>`).join('')}</div>`;
+}
+function emptyLine(msg){ return `<div style="color:var(--charcoal-soft);font-size:14px;">${msg}</div>`; }
+
+/* =========================================================================
+   PAGE: ABOUT / CONTACT
+   ========================================================================= */
+function pageAbout(){
+  return `
+  <section class="section-tight"><div class="container" style="max-width:640px;">
+    <div class="breadcrumb"><a href="#/">Home</a> / About</div>
+    <div class="card card-pad fade-up">
+      <div class="hero-emblem" style="border-color:var(--navy);color:var(--navy);margin-bottom:18px;"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="13" r="6.2"/><circle cx="15" cy="13" r="6.2"/></svg></div>
+      <h2 style="margin:0 0 18px;color:var(--navy);">About this project</h2>
+      <div class="ticket-row"><span class="k">Project Name</span><span class="v">Wedding Venue Management System</span></div>
+      <div class="ticket-row"><span class="k">Developer</span><span class="v">Anisha</span></div>
+      <div class="ticket-row"><span class="k">College</span><span class="v">JIMS Rohini, Delhi</span></div>
+      <div class="ticket-row"><span class="k">Course</span><span class="v">BCA (Bachelor of Computer Applications)</span></div>
+      <div class="ticket-row"><span class="k">Semester</span><span class="v">2nd Semester</span></div>
+      <div class="ticket-row"><span class="k">Academic Year</span><span class="v">2025 – 2026</span></div>
+      <p style="margin-top:20px;color:var(--charcoal-soft);font-size:14px;">This web edition mirrors the original C++ console application's structures, validation rules, and reports — venue and booking management, double-booking protection, and all eleven reports — inside a browser-based interface.</p>
+    </div>
+  </div></section>`;
+}
+function pageContact(){
+  return `
+  <section class="section-tight"><div class="container" style="max-width:520px;">
+    <div class="breadcrumb"><a href="#/">Home</a> / Contact</div>
+    <div class="card card-pad fade-up">
+      <h2 style="margin:0 0 8px;color:var(--navy);">Get in touch</h2>
+      <p style="color:var(--charcoal-soft);font-size:14px;margin-bottom:20px;">Questions about a venue, a booking, or the platform itself.</p>
+      <form onsubmit="event.preventDefault(); toast('Message sent (demo only).','success'); this.reset();">
+        <div class="field"><label>Name</label><input type="text" placeholder="Your name" required></div>
+        <div class="field"><label>Email</label><input type="email" placeholder="you@example.com" required></div>
+        <div class="field"><label>Message</label><textarea rows="4" placeholder="How can we help?" required></textarea></div>
+        <button class="btn btn-navy btn-block">Send Message</button>
+      </form>
+    </div>
+  </div></section>`;
+}
+
+/* =========================================================================
+   Shared UI helpers
+   ========================================================================= */
+function lockedPage(title, msg){
+  return `
+  <section class="section-tight"><div class="container" style="max-width:480px;">
+    <div class="breadcrumb"><a href="#/">Home</a> / ${title}</div>
+    <div class="card card-pad fade-up" style="text-align:center;">
+      <div class="hero-emblem" style="border-color:var(--navy);color:var(--navy);margin:0 auto 16px;">🔒</div>
+      <h2 style="margin:0 0 8px;color:var(--navy);">${title} is admin-only</h2>
+      <p style="color:var(--charcoal-soft);margin-bottom:20px;">${msg}</p>
+      <a href="#/login" class="btn btn-navy btn-block">Admin Login</a>
+    </div>
+  </div></section>`;
+}
+function emptyState(msg, icon){
+  return `<div class="empty-state" style="grid-column:1/-1;"><div class="icon">${icon||'○'}</div><div>${msg}</div></div>`;
+}
+function escapeHtml(str){
+  return String(str||'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+function escapeAttr(str){ return escapeHtml(str); }
+
+/* ---------------- login form handler (delegated, since it's rebuilt each render) ---------------- */
+document.addEventListener('submit', function(e){
+  if(e.target && e.target.id === 'loginForm'){
+    e.preventDefault();
+    const user = document.getElementById('loginUser').value.trim();
+    const pass = document.getElementById('loginPass').value;
+    const errEl = document.getElementById('loginErr');
+    if(user === ADMIN_USER && pass === ADMIN_PASS){
+      state.isAdmin = true;
+      toast('Login successful! Welcome, Admin.','success');
+      location.hash = '#/dashboard';
+      render();
+    } else {
+      errEl.textContent = 'Incorrect username or password.';
+      errEl.style.display = 'block';
+    }
+  }
+});
+function afterRenderHooks(path){
+  if(path==='/bookings' && bookingTab==='book') attachBookingFormHandlers();
+}
+
+/* ---------------- boot ---------------- */
+render();
+</script>
+</body>
+</html>
